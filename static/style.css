@@ -337,14 +337,34 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
   position: absolute;
   inset: 0;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  /* the covers are portrait and the open column is landscape: show the whole
+     cover instead of cropping it, and keep it clear of the bottom HUD bar */
+  height: calc(100% - var(--hud-h));
+  object-fit: contain;
+  object-position: right center;
+  padding: 20px 28px;
+  box-sizing: border-box;
   opacity: 0;
   transform: scale(1.06);
   transition: opacity 1.2s var(--ease-silk), transform 1.2s var(--ease-silk);
 }
 
 .slice.active .slice-img { opacity: 1; transform: scale(1); }
+
+/* a blurred, darkened copy of the same cover fills the rest of the open column */
+.slice-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(22px) brightness(0.5) saturate(1.1);
+  transform: scale(1.2);
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-silk);
+}
+
+.slice.active .slice-bg { opacity: 1; }
 
 .slice-shade {
   position: absolute;
@@ -665,6 +685,9 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
   .slice-idle-title { writing-mode: horizontal-tb; letter-spacing: 0.08em; }
   .slice-reveal { left: 24px; right: 24px; bottom: 20px; }
   .slice-reveal h3 { white-space: normal; }
+  /* stacked rows are wide and short: crop to the top of the cover (its title) */
+  .slice-img { height: 100%; object-fit: cover; object-position: center 15%; padding: 0; }
+  .slice-bg { display: none; }
   .fold-head { padding: 20px 24px 0; flex-direction: column; gap: 6px; }
   .accordion { margin-top: 16px; }
   .card-matrix { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
@@ -736,20 +759,6 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
   font-weight: 400;
   line-height: 1.7;
   color: #B8BCC2;
-}
-
-.subscribe-count {
-  margin: -16px 0 28px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #B8BCC2;
-}
-
-.subscribe-count-num {
-  color: var(--volt);
-  font-weight: 700;
 }
 
 .subscribe-btn {
