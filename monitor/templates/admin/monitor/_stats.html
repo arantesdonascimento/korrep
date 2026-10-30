@@ -1,0 +1,21 @@
+<style>
+  .monitor-stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 20px; }
+  .monitor-stat { flex: 1 1 150px; padding: 12px 16px; border: 1px solid var(--hairline-color, #ddd);
+                  background: var(--darkened-bg, #f8f8f8); border-radius: 4px; }
+  .monitor-stat-num { display: block; font-size: 28px; font-weight: 700; line-height: 1.2; }
+  .monitor-stat-label { font-size: 12px; color: var(--body-quiet-color, #666); }
+</style>
+{% if monitor_stats %}
+<div class="monitor-stats">
+  <div class="monitor-stat"><span class="monitor-stat-num">{{ monitor_stats.total }}</span>
+    <span class="monitor-stat-label">Confirmed subscribers (public counter)</span></div>
+  <div class="monitor-stat"><span class="monitor-stat-num">{{ monitor_stats.last_24h }}</span>
+    <span class="monitor-stat-label">New signups, last 24 hours</span></div>
+  <div class="monitor-stat"><span class="monitor-stat-num">{{ monitor_stats.last_24h_confirmed }}</span>
+    <span class="monitor-stat-label">Confirmed, last 24 hours</span></div>
+  <div class="monitor-stat"><span class="monitor-stat-num">{{ monitor_stats.unconfirmed }}</span>
+    <span class="monitor-stat-label">Waiting for email confirmation</span></div>
+  <div class="monitor-stat"><span class="monitor-stat-num">{{ monitor_stats.unanswered }}</span>
+    <span class="monitor-stat-label">Not replied to yet</span></div>
+</div>
+{% endif %}

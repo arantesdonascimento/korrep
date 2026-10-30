@@ -1,0 +1,204 @@
+Senior Django Engineer – Existing Project Integration: monitor App
+
+1. Szerepkör és feladat
+Viselkedj senior Django/Python fejlesztőként és szoftverarchitektként.
+Egy már létező, aktív fejlesztés alatt álló Django webalkalmazásba szeretnék integrálni egy új, különálló Django appot, amelynek neve: monitor
+
+A feladatod nem egy új projekt létrehozása, hanem a meglévő alkalmazás biztonságos, karbantartható és professzionális kibővítése.A meglévő projekt architektúráját, elnevezéseit, kódstílusát, adatmodelljeit, UI-ját és működő funkcióit részesítsd előnyben. Ne írj át működő kódot indokolatlanul, és ne hozz létre párhuzamos funkcionalitást.
+
+
+2. Munkamódszer – kötelező fázisok
+Fázis 1: A projekt feltérképezése
+Elsőként vizsgáld meg a rendelkezésedre álló projektfájlokat.
+Azonosítsd:
+•	A Django és Python verzióját.
+•	A projekt könyvtárstruktúráját.
+•	A settings.py és a fő URL-konfiguráció helyét.
+•	A meglévő Django appokat.
+•	A feliratkozási űrlapot, annak view-ját és URL-jét.
+•	A jelenlegi feliratkozói modellt és az adatbázist.
+•	A Django admin konfigurációját.
+•	A meglévő emailküldési megoldást és a környezeti változókat.
+•	A meglévő frontend- és template-struktúrát.
+•	A tesztelési infrastruktúrát.
+•	A deployolási környezetet és az esetleges meglévő scheduler/background task megoldásokat.
+Ne feltételezd, hogy a projekt egy adott adatbázist, email-szolgáltatót, frontend frameworköt vagy Django-verziót használ.
+Ha egy fontos fájl nem érhető el, nevezd meg, és kérd el. Ne találj ki meglévő modelleket, fájlútvonalakat vagy konfigurációkat.
+Ebben a fázisban ne módosíts fájlokat, ne futtass destruktív parancsokat, és ne hajts végre migrációt.
+Fázis 2: Integrációs terv
+Az elemzés alapján készíts konkrét tervet az alábbi tartalommal:
+1.	A jelenlegi rendszer rövid leírása.
+2.	A meglévő feliratkozási folyamat.
+3.	A javasolt monitor app pontos felelősségi köre.
+4.	Az új és módosítandó fájlok listája.
+5.	A szükséges adatbázis-módosítások.
+6.	Az azonnali és a napi emailértesítés megvalósítása.
+7.	A publikus számláló integrációja.
+8.	A tesztelési terv.
+9.	A telepítési és üzemeltetési teendők.
+10.	Az esetleges kockázatok és nyitott kérdések.
+Mutasd meg, melyik meglévő fájlt miért kell módosítani.
+Várj a terv jóváhagyására, mielőtt érdemi kódmódosításba kezdesz.
+3. Funkcionális követelmények
+A. Egyetlen hiteles adatforrás
+A rendszer már rendelkezik egy feliratkozási folyamattal, vagy annak elemei már elkészültek.
+Először állapítsd meg, hogy létezik-e feliratkozói modell.
+Ha létezik, azt használd. Ne hozz létre egy második, párhuzamos Subscriber vagy WaitlistEntry modellt csak a monitorozás kedvéért.
+A monitor app alapértelmezés szerint statisztikai, adminisztrációs és értesítési felelősséget kapjon. Új feliratkozói adatmodellt kizárólag akkor hozz létre, ha a projekt jelenlegi architektúrája ezt valóban indokolja.
+Az új feliratkozás pontos időpontját megbízhatóan kell tárolni, lehetőleg timezone-aware datetime mezővel.
+Az email-címek egyediségét az adatbázis szintjén is biztosítani kell, amennyiben ez megfelel a meglévő üzleti logikának.
+B. Statisztikák
+Készíts újrahasznosítható statisztikai réteget, amely legalább az alábbi értékeket adja vissza:
+•	total: összes érvényes feliratkozó.
+•	last_24h: az aktuális időpontot megelőző, gördülő 24 órában érkezett feliratkozások száma.
+•	pending: azok a jelentkezések, amelyekkel még foglalkoznom kell, amennyiben a meglévő modell tartalmaz megfelelő státuszmezőt.
+A statisztikákat az adatbázisból számítsd ki a Django ORM használatával.
+Ne használj kézzel növelt globális számlálót, és ne tarts fenn külön, könnyen inkonzisztens statisztikai táblát, hacsak a teljesítmény vagy a meglévő architektúra ezt később nem indokolja.
+A last_24h gördülő időablak legyen, ne az aktuális naptári nap.
+A számításokat UTC-kompatibilis, timezone-aware időpontokkal végezd a Django időzóna-beállításainak figyelembevételével.
+A függő jelentkezéseket csak akkor számold, ha a meglévő modell és üzleti logika egyértelműen meghatározza ezt az állapotot.
+C. Django admin
+A monitorozás integrálódjon a Django adminba.
+A meglévő adminfelületet ne cseréld le és ne írd felül.
+Ahol a meglévő feliratkozói modell adminisztrációja elérhető, egészítsd ki azt, ne regisztráld másodszor ugyanazt a modellt.
+Ahol technikailag és a meglévő adminstruktúrával összeegyeztethető, jelenítsd meg:
+•	Az összes feliratkozó számát.
+•	Az elmúlt 24 óra feliratkozásainak számát.
+•	A feldolgozásra váró jelentkezések számát.
+•	A legfrissebb jelentkezéseket.
+•	A releváns státuszokat és időpontokat.
+A feliratkozók kezeléséhez, kereséséhez és szűréséhez igazodj a meglévő adminstruktúrához.
+Ha az admin dashboardhoz külön oldal vagy custom admin view szükséges, annak megoldását ismertesd a tervben.
+Az adminfelület kizárólag megfelelően hitelesített és jogosult felhasználók számára legyen elérhető. Nyilvános API-n vagy template-en keresztül ne szivárogjanak ki email-címek.
+D. Azonnali emailértesítés
+Minden valóban új, sikeresen elmentett feliratkozás után küldj emailértesítést egy konfigurálható adminisztrátori email-címre.
+Az email tartalmazza:
+•	A feliratkozó email-címét.
+•	A feliratkozás időpontját.
+•	Az összes feliratkozó aktuális számát.
+•	Egy közvetlen linket a megfelelő adminfelületre, ha a meglévő adminstruktúra ezt támogatja.
+Az email tárgya legyen például:
+Új várólistás jelentkező
+Követelmények:
+•	Ne küldj ismételt értesítést ugyanazon email-cím duplikált beküldése miatt, ha az nem jelent új feliratkozást.
+•	Az email csak sikeres adatbázis-commit után induljon el.
+•	A küldési hiba ne törölje és ne tegye érvénytelenné a már rögzített jelentkezést.
+•	A hibát megfelelően naplózd.
+•	Ne használj éles környezetben konzolos email backendet.
+•	Az SMTP-hitelesítő adatokat és egyéb titkokat környezeti változókban vagy a meglévő titokkezelési rendszerben tárold.
+•	Ha a projekt már rendelkezik emailküldési szolgáltatással, azt használd új, párhuzamos infrastruktúra helyett.
+Ha rendelkezésre áll Celery vagy más háttérfeladat-kezelő, mérlegeld a megbízható, újrapróbálható emailküldést. Ha nincs, a projekt méretéhez és hostingkörnyezetéhez illő legegyszerűbb megbízható megoldást javasold.
+Különítsd el az adatbázis-tranzakció sikerét az emailkézbesítés sikerétől.
+E. Napi emailösszesítő
+Készíts automatikusan futtatható Django management commandot vagy a meglévő schedulerhez illeszkedő feladatot.
+A napi riport tartalmazza:
+•	Az előző naptári nap új feliratkozóinak számát.
+•	Az összes érvényes feliratkozó számát.
+•	A feldolgozásra váró jelentkezések számát.
+•	Opcionálisan egy admin linket a jelentkezések listájához.
+Az összesítés a projekt beállított időzónája szerint működjön, alapértelmezés szerint Europe/Budapest időzónával, ha ez illeszkedik a projekt követelményeihez.
+A napi riportot naponta egyszer, konfigurálható időpontban lehessen futtatni.
+A napi összesítő ne legyen összekeverve az azonnali, egyedi értesítésekkel.
+Biztosítsd a következőket:
+•	A management command kézzel is futtatható legyen.
+•	A futás hibái megfelelően naplózódjanak.
+•	Legyen dokumentálva a cron, scheduler vagy hosting platform szerinti időzítés.
+•	A duplikált riportküldés kockázatát kezeld a projekt igényeinek megfelelően.
+•	Ha tartós, pontosan egyszeri feldolgozás szükséges, használj adatbázisban rögzített riportállapotot vagy más megfelelő idempotens megoldást.
+Ne adj hozzá Celeryt, Redis-t vagy más infrastruktúrát automatikusan, ha egy egyszerű, ütemezett management command elegendő.
+F. Nyilvános főoldali számláló
+A nyilvános főoldalon kizárólag az összes feliratkozó száma jelenjen meg.
+Ne jelenítsd meg nyilvánosan:
+•	Az elmúlt 24 óra statisztikáját.
+•	Az email-címeket.
+•	A feldolgozási státuszokat.
+•	Bármilyen más belső statisztikát.
+A számláló a meglévő főoldalba és template-struktúrába illeszkedjen.
+Ne hozz létre új főoldalt, ha a projektnek már van működő kezdőoldala.
+A számlálót ugyanabból a statisztikai rétegből vagy megfelelően egyszerű ORM-lekérdezésből töltsd be.
+Ha cache-t alkalmazol, indokold meg, és állíts be ésszerű lejárati időt. Az első verzióban a közvetlen adatbázis-lekérdezés is elfogadható.
+Ha létezik email-megerősítési folyamat, a számláló a megerősített feliratkozókat számolja. Ha nincs ilyen folyamat, a meglévő üzleti definíció szerint számolj, és dokumentáld ezt.
+4. Biztonság és adatvédelem
+•	Tartsd meg a Django CSRF-védelmét.
+•	A publikus feliratkozási végpontot védd a spam és a túl sok kérés ellen a projekt infrastruktúrájához illő módon.
+•	Ne tegyél email-címeket publikus endpointok válaszába.
+•	Ne szivárogtass SMTP-jelszót, titkos kulcsot vagy más secretet a forráskódba.
+•	Ne naplózz szükségtelen személyes adatokat.
+•	Kövesd a meglévő adatvédelmi tájékoztatót és adatmegőrzési szabályokat.
+•	Ne tekintsd automatikusan a várólistára történő jelentkezést hírlevél-hozzájárulásnak.
+•	A duplikált email-címeket és az egyidejű beküldéseket adatbázis-szinten is kezeld megfelelően.
+•	Ne módosíts production adatokat, ne törölj adatokat, és ne futtass migrációt külön jóváhagyás nélkül.
+5. Kódminőség és architektúra
+•	Használd a projekt meglévő Python- és Django-verziójával kompatibilis megoldásokat.
+•	Kövesd a jelenlegi kódstílust és elnevezési konvenciókat.
+•	A statisztikákat, az emailküldést és az időzített riportot lehetőleg külön, jól tesztelhető felelősségekre bontsd.
+•	Kerüld a fölösleges absztrakciókat és a túltervezést.
+•	Ne vezess be új függőséget megfelelő indoklás és jóváhagyás nélkül.
+•	Ne módosíts nem kapcsolódó funkciókat.
+•	Minden új konfigurációhoz dokumentáld a szükséges környezeti változókat.
+•	A hibakezelés és a naplózás legyen következetes.
+6. Tesztelési követelmények
+Készíts teszteket legalább az alábbi esetekre:
+1.	Az összes feliratkozó helyes számlálása.
+2.	Az elmúlt 24 órás gördülő időablak helyes számítása.
+3.	A 24 órás határon kívüli rekordok kizárása.
+4.	Az új feliratkozás egyszeri rögzítése.
+5.	A duplikált email-beküldés kezelése.
+6.	Az azonnali értesítés elküldése új feliratkozáskor.
+7.	Az emailküldés elmaradása duplikált beküldéskor.
+8.	Az emailküldés hibájának kezelése adatvesztés nélkül.
+9.	A napi riport helyes dátumtartománya és számai.
+10.	A publikus főoldali számláló.
+11.	A nyilvános felületen megjelenő adatok adatvédelme.
+12.	Az admin jogosultságok megőrzése.
+Használd a projekt meglévő tesztelési keretrendszerét. Ha nincs ilyen, a Django beépített tesztelési eszközeit részesítsd előnyben.
+A tesztek ne küldjenek valódi emailt, és ne igényeljenek production adatbázist.
+7. Implementációs sorrend
+A jóváhagyott terv után ebben a sorrendben dolgozz:
+1.	A szükséges minimális app- és konfigurációs módosítások.
+2.	Statisztikai szolgáltatási réteg.
+3.	Adminfelület integrációja.
+4.	Azonnali emailértesítés.
+5.	Napi összesítő management command.
+6.	Nyilvános számláló integrációja.
+7.	Tesztek.
+8.	Dokumentáció és üzemeltetési útmutató.
+Minden szakasz után:
+•	Mutasd be a módosított fájlokat.
+•	Foglald össze a változtatásokat.
+•	Futtasd a releváns teszteket, ha erre lehetőséged van.
+•	Közöld a tényleges teszteredményeket.
+•	Jelezd a fennmaradó kockázatokat és az elvégzendő kézi lépéseket.
+Ne állítsd, hogy tesztet futtattál, migrációt alkalmaztál vagy emailt kézbesítettél, ha ez ténylegesen nem történt meg.
+8. Dokumentáció és átadás
+A végén készíts rövid, de teljes dokumentációt az alábbiakról:
+•	A monitor app szerepe.
+•	Az új és módosított fájlok.
+•	Szükséges környezeti változók.
+•	Migrációs parancsok.
+•	Tesztfuttatás.
+•	SMTP beállítása.
+•	A napi riport kézi futtatása.
+•	Cron vagy hosting platform szerinti időzítés.
+•	A publikus számláló működése.
+•	Az adminfelület elérése.
+•	Éles telepítés előtti ellenőrzőlista.
+•	Visszaállítási lehetőségek.
+
+9. Első válaszod
+Most kizárólag a projekt elemzésével kezdj.
+Ne írj még kódot, ne módosíts fájlokat, és ne hozz létre új appot.
+Először add meg:
+1.	Mit találtál a jelenlegi projektben.
+2.	Hogyan működik most a feliratkozási folyamat.
+3.	Mely meglévő elemek használhatók fel újra.
+4.	Pontosan hogyan illeszkedne a monitor app.
+5.	Mely fájlokat módosítanád, és miért.
+6.	Milyen információ hiányzik még.
+7.	Milyen lépésekben valósítanád meg a funkciókat.
+A cél egy minimális, biztonságos, tesztelhető és éles környezetben is üzemeltethető integráció, amely megőrzi a meglévő alkalmazás működését.
+
+
+
+
+

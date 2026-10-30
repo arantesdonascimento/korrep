@@ -1,0 +1,116 @@
+--- a/korrep/settings.py
++++ b/korrep/settings.py
+@@ -38,6 +38,7 @@
+     'django.contrib.messages',
+     'django.contrib.staticfiles',
+     'subscriptions',
++    'monitor.apps.MonitorConfig',
+ ]
+ 
+ MIDDLEWARE = [
+@@ -133,3 +134,39 @@
+ EMAIL_BACKEND = env('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+ DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='noreply@korrep.local')
+ SITE_URL = env('SITE_URL', default='http://localhost:8000')
++
++# SMTP (production). Local development keeps the console backend above.
++# Set these in .env when a real sender account is available.
++EMAIL_HOST = env('EMAIL_HOST', default='localhost')
++EMAIL_PORT = env.int('EMAIL_PORT', default=25)
++EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
++EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
++EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=False)
++EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', default=False)
++# Never let a slow SMTP server block a web request indefinitely.
++EMAIL_TIMEOUT = env.int('EMAIL_TIMEOUT', default=10)
++
++
++# Monitor app
++# Recipient of the instant new-subscriber email and the daily report.
++# Empty = no email is sent; data is still collected in the Django admin
++# (Monitor > Subscriber notifications / Daily reports).
++MONITOR_NOTIFY_EMAIL = env('MONITOR_NOTIFY_EMAIL', default='')
++# The daily report covers the previous calendar day in this time zone.
++MONITOR_REPORT_TIMEZONE = env('MONITOR_REPORT_TIMEZONE', default='Europe/Budapest')
++
++
++# Logging
++LOGGING = {
++    'version': 1,
++    'disable_existing_loggers': False,
++    'formatters': {
++        'simple': {'format': '%(asctime)s %(levelname)s %(name)s: %(message)s'},
++    },
++    'handlers': {
++        'console': {'class': 'logging.StreamHandler', 'formatter': 'simple'},
++    },
++    'loggers': {
++        'monitor': {'handlers': ['console'], 'level': 'INFO', 'propagate': False},
++    },
++}
+--- a/korrep/urls.py
++++ b/korrep/urls.py
+@@ -3,10 +3,10 @@
+ """
+ from django.contrib import admin
+ from django.urls import path, include
+-from django.views.generic import TemplateView
++from monitor.views import HomeView
+ 
+ urlpatterns = [
+     path('admin/', admin.site.urls),
+-    path('', TemplateView.as_view(template_name='index.html'), name='home'),
++    path('', HomeView.as_view(), name='home'),
+     path('subscriptions/', include('subscriptions.urls')),
+ ]
+--- a/subscriptions/admin.py
++++ b/subscriptions/admin.py
+@@ -1,4 +1,5 @@
+ from django.contrib import admin
++from monitor.services import get_subscriber_stats
+ from .models import Subscriber
+ 
+ 
+@@ -10,3 +11,9 @@
+     readonly_fields = ['confirmation_token', 'created_at', 'activated_at']
+     ordering = ['-created_at']
+ 
++    change_list_template = 'admin/subscriptions/subscriber/change_list.html'
++
++    def changelist_view(self, request, extra_context=None):
++        extra_context = extra_context or {}
++        extra_context['monitor_stats'] = get_subscriber_stats()
++        return super().changelist_view(request, extra_context=extra_context)
+--- a/templates/index.html
++++ b/templates/index.html
+@@ -155,6 +155,7 @@
+       <p class="subscribe-eyebrow">05 / Stay Connected</p>
+       <h2 class="subscribe-heading">SUBSCRIBE TO KORREP</h2>
+       <p class="subscribe-desc">Get notified about updates, releases, and exclusive access. Email is required, phone number is optional.</p>
++      <p class="subscribe-count"><span class="subscribe-count-num">{{ subscriber_count }}</span> confirmed subscribers</p>
+       <a href="/subscriptions/subscribe/" class="subscribe-btn">Subscribe Now</a>
+     </div>
+     <div class="subscribe-grid" aria-hidden="true"></div>
+--- a/static/style.css
++++ b/static/style.css
+@@ -738,6 +738,20 @@
+   color: #B8BCC2;
+ }
+ 
++.subscribe-count {
++  margin: -16px 0 28px;
++  font-family: 'JetBrains Mono', monospace;
++  font-size: 12px;
++  letter-spacing: 0.2em;
++  text-transform: uppercase;
++  color: #B8BCC2;
++}
++
++.subscribe-count-num {
++  color: var(--volt);
++  font-weight: 700;
++}
++
+ .subscribe-btn {
+   display: inline-block;
+   padding: 14px 40px;

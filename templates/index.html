@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KORREP - Quality</title>
+<meta name="description" content="The Nexus is a Z-Depth scroll-stacking industrial tech template with a brushed titanium and acid volt design system.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="scroll-spacer" aria-hidden="true"></div>
+
+<!-- card 1: the floating hero -->
+<section class="zcard card-hero" data-card="1">
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="glass-shape glass-a" aria-hidden="true"></div>
+  <div class="glass-shape glass-b" aria-hidden="true"></div>
+  <div class="glass-shape glass-c" aria-hidden="true"></div>
+  <div class="hero-stage">
+    <p class="hero-eyebrow">A - K O R R E P</p>
+    <h1 class="hero-title">THE  KORREP</h1>
+    <p class="hero-sub">One chassis. Infinite configurations. Precision-engineered infrastructure for teams that build at the edge of what hardware allows.</p>
+  </div>
+  <div class="hero-scroll-hint">Scroll to descend</div>
+</section>
+
+<!-- card 2: the engineered image overlay -->
+<section class="zcard card-macro" data-card="2">
+  <img class="macro-img" src="/static/images/nexus-macro.jpg" alt="Macro view of the Nexus core module">
+  <div class="macro-shade" aria-hidden="true"></div>
+  <div class="crosshair-v" aria-hidden="true"></div>
+  <div class="crosshair-h" aria-hidden="true"></div>
+  <div class="node-dot" aria-hidden="true"></div>
+  <div class="node-box">
+    <p class="node-box-tag">NODE / NX-07 TELEMETRY</p>
+    <div class="node-stat"><span>ÖSSZESEN</span><span>{{ public_stats.total }}</span></div>
+    <div class="node-stat"><span>ELMÚLT 24h</span><span>{{ public_stats.last_24h }}</span></div>
+    <div class="node-stat"><span>ELMÚLT 7 NAP</span><span>{{ public_stats.last_7d }}</span></div>
+  </div>
+  <div class="macro-caption">
+    <span class="mono">02 / Engineered in the open</span>
+    <h2>Every micron is accounted for.</h2>
+  </div>
+</section>
+
+<!-- card 3: the kinetic accordion fold -->
+<section class="zcard card-fold" data-card="3">
+  <div class="fold-head">
+    <h2>Available Topics. Path toward clarity.</h2>
+    <span class="mono">03 / Hover or tap a column</span>
+  </div>
+  <div class="accordion" id="accordion">
+    <button class="slice" type="button" aria-expanded="false">
+      <img class="slice-img" src="/static/images/Introduction_business_math.png" alt="Introduction_business_math">
+      <div class="slice-shade" aria-hidden="true"></div>
+      <div class="slice-idle">
+        <span class="slice-num">A.01</span>
+        <span class="slice-idle-title">Calculus for Business and Economics</span>
+        <span class="slice-num" aria-hidden="true">+</span>
+      </div>
+      <div class="slice-reveal">
+        <span class="mono">A.01 / GAZDASÁGI MATEMATIKA és KVANTITATÍV MÓDSZEREK</span>
+        <h3>GAZDASÁGI MATEMATIKA / KVANTITATÍV MÓDSZEREK</h3>
+        <p>A gazdasági matematika kulcsfontosságú a modern üzleti életben,
+            a pénzügyi döntéshozatalban és a közgazdasági elemzésekben,
+            mivel logikus keretet ad a kockázatok és a piaci folyamatok megértéséhez.</p>
+      </div>
+    </button>
+    <button class="slice" type="button" aria-expanded="false">
+      <img class="slice-img" src="/static/images/high_maths.png" alt="high_maths">
+      <div class="slice-shade" aria-hidden="true"></div>
+      <div class="slice-idle">
+        <span class="slice-num">A.02</span>
+        <span class="slice-idle-title">Higher Mathematics</span>
+        <span class="slice-num" aria-hidden="true">+</span>
+      </div>
+      <div class="slice-reveal">
+        <span class="mono">A.02 / EGYETEMI MATEMATIKA</span>
+        <h3>EGYETEMI MATEMATIKA</h3>
+        <p>A sealed dielectric loop moves heat away from silicon at the source, holding the entire rack within a two degree band.</p>
+      </div>
+    </button>
+    <button class="slice" type="button" aria-expanded="false">
+      <img class="slice-img" src="/static/images/intermediate_maths.jpg" alt="intermediate_maths">
+      <div class="slice-shade" aria-hidden="true"></div>
+      <div class="slice-idle">
+        <span class="slice-num">A.03</span>
+        <span class="slice-idle-title">Intermediate Mathematics</span>
+        <span class="slice-num" aria-hidden="true">+</span>
+      </div>
+      <div class="slice-reveal">
+        <span class="mono">A.03 / KÖZÉPISKOLAI MATEMATIKA és ÉRETTSÉGI</span>
+        <h3>KÖZÉPISKOLAI MATEMATIKA és ÉRETTSÉGI</h3>
+        <p>A középiskolai matematika tanulása és az érettségire való felkészülés az alábbi főbb témakörökre épül,
+            valamint számos hasznos online platform áll hozzá rendelkezésre.</p>
+      </div>
+    </button>
+    <button class="slice" type="button" aria-expanded="false">
+      <img class="slice-img" src="/static/images/django_python.jpg" alt="django_python">
+      <div class="slice-shade" aria-hidden="true"></div>
+      <div class="slice-idle">
+        <span class="slice-num">A.04</span>
+        <span class="slice-idle-title">Django Python</span>
+        <span class="slice-num" aria-hidden="true">+</span>
+      </div>
+      <div class="slice-reveal">
+        <span class="mono">A.04 / DJANGO PYTHON WEBFEJLESZTÉS</span>
+        <h3>DJANGO PYTHON WEBFEJLESZTÉS</h3>
+        <p>A Django a világ egyik legnépszerűbb nyílt forráskódú Python webes keretrendszere.
+            A Django webfejlesztés oktatása azért rendkívül kifizetődő,
+            mert a keretrendszer a „batteries included” (minden beépítve) filozófiát követi,
+            így a tanulók minimális konfigurációval, gyorsan építhetnek biztonságos és professzionális alkalmazásokat.</p>
+      </div>
+    </button>
+  </div>
+</section>
+
+<!-- card 4: the matrix tabs and signature -->
+<section class="zcard card-matrix" data-card="4">
+  <div class="matrix-left">
+    <p class="mono-tag">04 / Inside the platform</p>
+    <h2>Elérhető témakörök</h2>
+    <div class="matrix-tabs">
+      <button class="matrix-tab active" type="button" data-goto="core" aria-selected="true">
+        <span class="tab-line"><span class="tab-num">01.</span><span class="tab-name">CALCULUS for BUSINESS and ECONOMICS</span></span>
+        <p>Matematikai közgazdaságtan, matematikai módszerek alkalmazása közgazdasági elméletek leírására. Kvantitatív és matematikai-statisztikai módszerek.</p>
+      </button>
+      <button class="matrix-tab" type="button" data-goto="fluidics" aria-selected="false">
+        <span class="tab-line"><span class="tab-num">02.</span><span class="tab-name">HIGHER MATHEMATICS</span></span>
+        <p>Emelt szintű vagy haladó matematika, egyetemi kurzusok. Mérnöki matematika / alkalmazott matematika.</p>
+      </button>
+      <button class="matrix-tab" type="button" data-goto="sync" aria-selected="false">
+        <span class="tab-line"><span class="tab-num">03.</span><span class="tab-name">INTERMEDIATE MATHEMATICS</span></span>
+        <p>Középiskolai / Középhaladó / Középszintű / Emelt szintű matematika. </p>
+      </button>
+    </div>
+  </div>
+  <div class="matrix-right">
+    <img class="matrix-img active" data-panel="core" src="/static/images/Corvinus_foepulet.jpg" alt="Corvinus_foepulet">
+    <img class="matrix-img" data-panel="fluidics" src="/static/images/Budapesti-Muszaki-Egyetem-K-epulete.jpg" alt="Budapesti-Muszaki-Egyetem-K-epulete">
+    <img class="matrix-img" data-panel="sync" src="/static/images/radnoti_kivulrol.png" alt="radnoti_kivulrol">
+    <div class="matrix-img-shade" aria-hidden="true"></div>
+    <div class="matrix-caption" id="matrixCaption">FIG. 01 / Budapest, Budapesti Corvinus Egyetem</div>
+  </div>
+</section>
+
+<!-- subscription section -->
+<section class="zcard card-subscribe" data-card="5">
+  <div class="subscribe-wrap">
+    <div class="subscribe-content">
+      <p class="subscribe-eyebrow">05 / Stay Connected</p>
+      <h2 class="subscribe-heading">SUBSCRIBE TO KORREP</h2>
+      <p class="subscribe-desc">Get notified about updates, releases, and exclusive access. Email is required, phone number is optional.</p>
+      <a href="/subscriptions/subscribe/" class="subscribe-btn">Subscribe Now</a>
+    </div>
+    <div class="subscribe-grid" aria-hidden="true"></div>
+  </div>
+</section>
+
+<!-- permanent hud signature bar -->
+<footer class="hud">
+  <a class="hud-brand" href="https://www.nasa.gov" target="_blank" rel="nofollow noopener">
+    <span class="dot" aria-hidden="true"></span>Korrep
+  </a>
+  <span class="hud-credit">J P - K O R R E P / <a href="https://www.google.hu" target="_blank" rel="nofollow noopener">JPSTUDIO</a></span>
+  <div class="hud-progress">
+    <div class="hud-track"><div class="hud-fill" id="hudFill"></div></div>
+    <span class="hud-pct" id="hudPct">000%</span>
+  </div>
+  <div class="hud-nav">
+    <button class="hud-arrow" id="navUp" type="button" aria-label="Previous section">
+      <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 9L7 4L12 9" stroke="currentColor" stroke-width="1.5"/></svg>
+    </button>
+    <button class="hud-arrow" id="navDown" type="button" aria-label="Next section">
+      <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 5L7 10L12 5" stroke="currentColor" stroke-width="1.5"/></svg>
+    </button>
+  </div>
+</footer>
+
+<script src="/static/script.js"></script>
+</body>
+</html>

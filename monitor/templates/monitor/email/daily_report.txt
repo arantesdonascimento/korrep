@@ -1,0 +1,18 @@
+{% autoescape off %}Korrep napi összesítő – {{ day|date:"Y-m-d" }}
+
+Új feliratkozások aznap: {{ report.new_submissions }}
+Aznap megerősítettek: {{ report.new_confirmed }}
+Összes megerősített feliratkozó: {{ report.total_confirmed }}
+Megerősítésre váró jelentkezések: {{ report.unconfirmed }}
+Még nem kapott választ: {{ unanswered }} jelentkező ({{ unanswered_link }})
+
+Aznapi jelentkezők ({{ tz }}):
+{% for r in rows %}- {{ r.when }}  {{ r.email }}  [{% if r.confirmed %}megerősítve{% else %}megerősítésre vár{% endif %}]
+{% if r.message %}    Üzenet: {{ r.message }}
+{% endif %}{% if r.replied %}    Válasz: elküldve
+{% else %}    Válasz küldése: {{ r.reply_link }}
+{% endif %}{% empty %}(nem volt új jelentkező)
+{% endfor %}{% if more %}... és még {{ more }} jelentkező, lásd az adminban.
+{% endif %}
+Jelentkezések: {{ admin_link }}
+{% endautoescape %}

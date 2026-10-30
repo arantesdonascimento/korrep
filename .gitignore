@@ -1,0 +1,46 @@
+# Python gyorsítótárak és lefordított fájlok
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtuális környezet (Virtual Environment)
+venv/
+.venv/
+env/
+ENV/
+modules/
+
+# Django specifikus fájlok és adatok
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Környezeti változók (Titkos kulcsok, jelszavak)
+.env
+.flaskenv
+
+# Fejlesztőeszközök és IDE-k (VS Code, PyCharm)
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Tesztelés és lefedettség (Coverage)
+.toml
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# Operációs rendszer által generált fájlok
+.DS_Store
+Thumbs.db
+
+

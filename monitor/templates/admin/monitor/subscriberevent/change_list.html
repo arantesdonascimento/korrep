@@ -1,0 +1,24 @@
+{% extends "admin/change_list.html" %}
+
+{% block content %}
+{% include "admin/monitor/_stats.html" %}
+
+{% if monitor_recent_reports %}
+<div class="module" style="margin-bottom: 20px;">
+  <table style="width: 100%;">
+    <caption>Latest daily reports</caption>
+    <thead>
+      <tr><th>Day</th><th>New signups</th><th>Confirmed that day</th><th>Total confirmed</th><th>Waiting</th><th>Emailed</th></tr>
+    </thead>
+    <tbody>
+    {% for r in monitor_recent_reports %}
+      <tr><td>{{ r.report_date|date:"Y-m-d" }}</td><td>{{ r.new_submissions }}</td><td>{{ r.new_confirmed }}</td>
+          <td>{{ r.total_confirmed }}</td><td>{{ r.unconfirmed }}</td><td>{% if r.emailed_at %}yes{% else %}no{% endif %}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{{ block.super }}
+{% endblock %}

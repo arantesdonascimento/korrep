@@ -1,0 +1,58 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">Home</a> &rsaquo;
+  <a href="{% url 'admin:subscriptions_subscriber_changelist' %}">Subscribers</a> &rsaquo;
+  <a href="{% url 'admin:subscriptions_subscriber_change' subscriber.pk %}">{{ subscriber.email }}</a> &rsaquo;
+  Reply
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <p><strong>To:</strong> {{ subscriber.email }}</p>
+  {% if not subscriber.is_active %}
+  <p class="errornote">This address is not confirmed yet: the person has not clicked the confirmation link, so the address may not be theirs.</p>
+  {% endif %}
+
+  {% if subscriber.message %}
+  <div class="module">
+    <h2>Their message</h2>
+    <div style="padding: 10px 12px;">{{ subscriber.message|linebreaksbr }}</div>
+  </div>
+  {% endif %}
+
+  {% if previous_replies %}
+  <div class="module">
+    <h2>Earlier replies</h2>
+    <table style="width: 100%;">
+      <thead><tr><th>Sent</th><th>Subject</th><th>Message</th></tr></thead>
+      <tbody>
+      {% for r in previous_replies %}
+        <tr><td>{{ r.sent_at|date:"Y-m-d H:i" }}</td><td>{{ r.subject }}</td><td>{{ r.body|truncatechars:120 }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <fieldset class="module aligned">
+      <div class="form-row">
+        {{ form.subject.errors }}
+        {{ form.subject.label_tag }} {{ form.subject }}
+      </div>
+      <div class="form-row">
+        {{ form.body.errors }}
+        {{ form.body.label_tag }} {{ form.body }}
+      </div>
+    </fieldset>
+    <div class="submit-row">
+      <input type="submit" value="Send reply" class="default">
+    </div>
+  </form>
+</div>
+{% endblock %}

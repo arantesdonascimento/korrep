@@ -1,0 +1,13 @@
+{% autoescape off %}Új feliratkozó érkezett a Korrep oldalon.
+
+Email: {{ email }}
+Időpont: {{ when }}
+{% if message %}Üzenet:
+{{ message }}
+{% endif %}Megerősített feliratkozók száma: {{ total_confirmed }}
+Megerősítésre váró feliratkozók száma: {{ unconfirmed }}
+Még nem kapott választ: {{ unanswered }} jelentkező ({{ unanswered_link }})
+
+Válasz küldése neki: {{ reply_link }}
+Admin: {{ admin_link }}
+{% endautoescape %}
