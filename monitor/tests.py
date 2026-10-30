@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.core import mail
+from django.conf import settings
 from django.test import SimpleTestCase
 from django.core.management import call_command
 from django.core.management.base import CommandError
@@ -481,6 +482,13 @@ class ConfirmationEmailTests(TestCase):
         self.assertTrue(subscriber.is_active)
         self.assertIsNotNone(subscriber.activated_at)
 
+    def test_sending_is_logged_without_the_address(self):
+        with self.assertLogs('subscriptions.views', level='INFO') as logs:
+            self.post('new@example.com')
+        text = ' '.join(logs.output)
+        self.assertIn('Confirmation email handed to the mail server', text)
+        self.assertNotIn('new@example.com', text)
+
     def test_resubmitting_an_unconfirmed_email_resends_the_confirmation(self):
         self.post('new@example.com')
         self.post('new@example.com')
@@ -758,9 +766,49 @@ class CheckEmailSetupTests(TestCase):
             self.run_check('--send-test')
         self.assertEqual(mail.outbox, [])
 
+    def test_send_test_to_another_address(self):
+        self.run_check('--send-test', '--to=someone@example.com')
+        self.assertEqual(mail.outbox[0].to, ['someone@example.com'])
+
+    def test_to_without_send_test_is_an_error(self):
+        with self.assertRaises(CommandError):
+            self.run_check('--to=someone@example.com')
+
     def test_send_test_failure_is_reported(self):
         target = 'monitor.management.commands.check_email_setup.send_mail'
         with mock.patch(target, side_effect=OSError('no route')):
             with self.assertRaises(CommandError) as ctx:
                 self.run_check('--send-test')
         self.assertIn('OSError', str(ctx.exception))
+
+
+@monitor_settings
+class WelcomePopupTests(TestCase):
+    def test_home_contains_an_accessible_welcome_dialog(self):
+        response = self.client.get(reverse('home'))
+        self.assertContains(response, 'id="welcome"')
+        self.assertContains(response, 'role="dialog"')
+        self.assertContains(response, 'aria-modal="true"')
+        self.assertContains(response, 'aria-labelledby="welcomeTitle"')
+        self.assertContains(response, 'href="/subscriptions/subscribe/" data-welcome-cta')
+        self.assertContains(response, '/static/welcome.js')
+
+    def test_dialog_starts_hidden_so_it_does_not_flash_without_javascript(self):
+        response = self.client.get(reverse('home'))
+        self.assertContains(response, '<div class="welcome" id="welcome" hidden>')
+
+    def test_social_proof_shows_the_confirmed_count_only_when_there_is_one(self):
+        self.assertNotContains(self.client.get(reverse('home')), 'feliratkozó már csatlakozott')
+        make_subscriber('a@example.com', confirmed_at=datetime(2026, 10, 1, tzinfo=UTC))
+        make_subscriber('b@example.com')  # unconfirmed: not counted
+        response = self.client.get(reverse('home'))
+        self.assertContains(response, '<strong>1</strong> feliratkozó már csatlakozott')
+
+    def test_popup_does_not_appear_on_the_subscribe_page(self):
+        response = self.client.get(reverse('subscriptions:subscribe'))
+        self.assertNotContains(response, 'id="welcome"')
+
+    def test_script_remembers_the_visitor_and_supports_a_test_switch(self):
+        source = (settings.BASE_DIR / 'static' / 'welcome.js').read_text(encoding='utf-8')
+        for needle in ('korrepWelcomeSeen', 'welcome=1', 'Escape', 'QUIET_DAYS'):
+            self.assertIn(needle, source)

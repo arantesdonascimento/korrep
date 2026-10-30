@@ -185,6 +185,40 @@
   </div>
 </footer>
 
+<!-- welcome popup: invites first-time visitors to subscribe (static/welcome.js) -->
+<div class="welcome" id="welcome" hidden>
+  <div class="welcome-backdrop" data-welcome-close></div>
+  <div class="welcome-panel" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" aria-describedby="welcomeDesc" tabindex="-1">
+    <span class="welcome-corner welcome-corner-tl" aria-hidden="true"></span>
+    <span class="welcome-corner welcome-corner-tr" aria-hidden="true"></span>
+    <span class="welcome-corner welcome-corner-bl" aria-hidden="true"></span>
+    <span class="welcome-corner welcome-corner-br" aria-hidden="true"></span>
+    <span class="welcome-sweep" aria-hidden="true"></span>
+
+    <button class="welcome-close" type="button" aria-label="Bezárás" data-welcome-close>
+      <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 2L12 12M12 2L2 12" stroke="currentColor" stroke-width="1.5"/></svg>
+    </button>
+
+    <p class="welcome-tag"><span class="welcome-pulse" aria-hidden="true"></span>SYS / ÜDVÖZLÉS</p>
+    <h2 class="welcome-title" id="welcomeTitle">Üdvözlünk a <em>Korrepen!</em></h2>
+    <p class="welcome-lead" id="welcomeDesc">Iratkozz fel, és elsőként értesülsz a frissítésekről, az új anyagokról és a kizárólagos hozzáférésekről.</p>
+
+    <ul class="welcome-list">
+      <li><span class="welcome-key">01 / Témakörök</span><span>Gazdasági és egyetemi matematika, középiskolai matematika és érettségi, Django Python webfejlesztés.</span></li>
+      <li><span class="welcome-key">02 / Mi kell hozzá</span><span>Csak az email-címed. A telefonszám és az üzenet nem kötelező.</span></li>
+      <li><span class="welcome-key">03 / Megerősítés</span><span>Küldünk egy levelet: a benne lévő linkre kattintva aktiválod a feliratkozást.</span></li>
+    </ul>
+
+    {% if public_stats.total %}<p class="welcome-proof"><strong>{{ public_stats.total }}</strong> feliratkozó már csatlakozott</p>{% endif %}
+
+    <div class="welcome-actions">
+      <a class="welcome-cta" href="/subscriptions/subscribe/" data-welcome-cta>Feliratkozom</a>
+      <button class="welcome-later" type="button" data-welcome-close>Később</button>
+    </div>
+  </div>
+</div>
+
 <script src="/static/script.js"></script>
+<script src="/static/welcome.js"></script>
 </body>
 </html>
