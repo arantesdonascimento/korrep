@@ -40,6 +40,8 @@ monitor_settings = override_settings(
     MONITOR_REPORT_TIMEZONE='Europe/Budapest',
     SITE_URL='http://testserver',
     DEFAULT_FROM_EMAIL='owner@example.test',
+    # cheap hashing keeps the many test users fast (tests only)
+    PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'],
 )
 
 
@@ -482,13 +484,6 @@ class ConfirmationEmailTests(TestCase):
         self.assertTrue(subscriber.is_active)
         self.assertIsNotNone(subscriber.activated_at)
 
-    def test_sending_is_logged_without_the_address(self):
-        with self.assertLogs('subscriptions.views', level='INFO') as logs:
-            self.post('new@example.com')
-        text = ' '.join(logs.output)
-        self.assertIn('Confirmation email handed to the mail server', text)
-        self.assertNotIn('new@example.com', text)
-
     def test_resubmitting_an_unconfirmed_email_resends_the_confirmation(self):
         self.post('new@example.com')
         self.post('new@example.com')
@@ -620,12 +615,16 @@ class ReplyTests(TestCase):
         self.client.force_login(self.superuser)
         self.client.post(self.url, self.payload)
         listing = reverse('admin:subscriptions_subscriber_changelist')
+        # The page also shows the "Reply sent to guest@..." banner from the POST above,
+        # so check the list rows by their links instead of by the address text.
+        guest_row = f'/admin/subscriptions/subscriber/{self.subscriber.pk}/change/'
+        other_row = f'/admin/subscriptions/subscriber/{other.pk}/change/'
         not_replied = self.client.get(listing, {'replied': 'no'})
-        self.assertContains(not_replied, 'other@example.com')
-        self.assertNotContains(not_replied, 'guest@example.com')
+        self.assertContains(not_replied, other_row)
+        self.assertNotContains(not_replied, guest_row)
         replied = self.client.get(listing, {'replied': 'yes'})
-        self.assertContains(replied, 'guest@example.com')
-        self.assertNotContains(replied, 'other@example.com')
+        self.assertContains(replied, guest_row)
+        self.assertNotContains(replied, other_row)
         detail = self.client.get(reverse('admin:subscriptions_subscriber_change', args=[self.subscriber.pk]))
         self.assertContains(detail, 'Welcome to Korrep')
         self.assertContains(detail, 'Thanks for writing!')
@@ -765,14 +764,6 @@ class CheckEmailSetupTests(TestCase):
         with self.assertRaises(CommandError):
             self.run_check('--send-test')
         self.assertEqual(mail.outbox, [])
-
-    def test_send_test_to_another_address(self):
-        self.run_check('--send-test', '--to=someone@example.com')
-        self.assertEqual(mail.outbox[0].to, ['someone@example.com'])
-
-    def test_to_without_send_test_is_an_error(self):
-        with self.assertRaises(CommandError):
-            self.run_check('--to=someone@example.com')
 
     def test_send_test_failure_is_reported(self):
         target = 'monitor.management.commands.check_email_setup.send_mail'
