@@ -129,6 +129,13 @@ python manage.py check_email_setup --send-test
 ```
 Az első kiírja a hatályos módot és a linkek alapját, és figyelmeztet (például ha a gépnév nincs az `ALLOWED_HOSTS`-ban, SMTP mellett a linkek `localhost`-ra mutatnak, a `DEBUG` be van kapcsolva szerver módban, vagy a `.env`-ben maradt egy figyelmen kívül hagyott `SITE_URL`). A második egy teszt levelet is küld a `MONITOR_NOTIFY_EMAIL` címre.
 
+## Welcome popup
+A főoldalon a látogatás után kb. 0,9 másodperccel felugró üdvözlő ablak (`templates/index.html` alján a markup, `static/welcome.js` a viselkedés, `static/style.css` végén a stílus).
+- **Mikor jelenik meg:** minden látogatáskor egyszer (`SHOW_MODE = "visit"`, a böngésző munkamenetére számítva). Frissítésre, vagy ha a látogató a feliratkozó űrlapról visszajön a főoldalra, nem ugrik fel újra; új látogatáskor (új böngészőablak/lap, a böngésző bezárása után) igen. Ha minden oldalbetöltéskor kell, a `static/welcome.js` elején állítsd `SHOW_MODE = "always"`-re.
+- **Adatvédelem:** a látogatóról semmi nem tárolódik a munkamenetnél tovább (nincs cookie és `localStorage`), és semmi nem megy a szerverre. A popup nem tudja, ki iratkozott már fel, és nem is követi.
+- **Tesztelés:** az oldal címéhez fűzött `?welcome=1` mindig megjeleníti.
+- A „N feliratkozó már csatlakozott” sor csak akkor látszik, ha van megerősített feliratkozó.
+
 ## Válasz a feliratkozónak
 - Az **azonnali értesítő** és a **napi összesítő** levélben a feliratkozó email-címe kattintható: a címre kattintva az admin **válaszűrlapja** nyílik meg (be kell jelentkezned az adminba). Mellette „Válasz küldése” gomb is van.
 - Az adminban ugyanez: **Monitor → Subscriber notifications** (az email-cím a link), a **Subscribers** lista „✉ Reply” oszlopa és a feliratkozó oldalán a „✉ Reply” gomb.

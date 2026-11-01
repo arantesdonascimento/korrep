@@ -1,5 +1,8 @@
 /* Welcome popup: appears shortly after the page loads and invites the visitor to subscribe.
-   - After it is closed (or the button is used) it stays quiet for QUIET_DAYS days.
+   - SHOW_MODE "visit" (default): once per visit, i.e. once per browser session. A reload or a
+     trip to the subscribe form and back does not show it again; a new visit does.
+   - SHOW_MODE "always": on every page load.
+   - Nothing is stored about the visitor beyond the current browser session, and nothing is sent anywhere.
    - Add ?welcome=1 to the address to see it again whenever you like (handy for testing).
    - Esc, the X, the "Később" button and a click on the dark backdrop all close it. */
 (function () {
@@ -8,29 +11,21 @@
   var root = document.getElementById("welcome");
   if (!root) return;
 
-  var DELAY_MS = 900;      // how soon after load it appears
-  var QUIET_DAYS = 7;      // how long it stays away after being closed
-  var KEY = "korrepWelcomeSeen";
+  var DELAY_MS = 900;       // how soon after load it appears
+  var SHOW_MODE = "visit";  // "visit" = once per visit | "always" = on every page load
+  var KEY = "korrepWelcomeShown";
 
   var panel = root.querySelector(".welcome-panel");
   var forced = /[?&]welcome=1(&|$)/.test(window.location.search);
   var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var lastFocus = null;
 
-  function remember() {
-    var now = String(Date.now());
-    try { window.localStorage.setItem(KEY, now); return; } catch (e) { /* storage blocked */ }
-    try { window.sessionStorage.setItem(KEY, now); } catch (e2) { /* nothing to do */ }
+  function markShown() {
+    try { window.sessionStorage.setItem(KEY, "1"); } catch (e) { /* storage blocked: it then shows on every load */ }
   }
 
-  function recentlySeen() {
-    var raw = null;
-    try { raw = window.localStorage.getItem(KEY); } catch (e) { /* storage blocked */ }
-    if (!raw) {
-      try { raw = window.sessionStorage.getItem(KEY); } catch (e2) { /* nothing to do */ }
-    }
-    var t = parseInt(raw, 10);
-    return !isNaN(t) && Date.now() - t < QUIET_DAYS * 86400000;
+  function shownThisVisit() {
+    try { return window.sessionStorage.getItem(KEY) === "1"; } catch (e) { return false; }
   }
 
   function focusables() {
@@ -40,6 +35,7 @@
   function open() {
     if (!root.hidden) return;
     lastFocus = document.activeElement;
+    markShown();
     root.hidden = false;
     document.documentElement.classList.add("welcome-open");
     // two frames, so the browser has painted the closed state and the transition runs
@@ -52,7 +48,6 @@
 
   function close() {
     if (root.hidden) return;
-    remember();
     root.classList.remove("is-open");
     document.documentElement.classList.remove("welcome-open");
     window.setTimeout(function () {
@@ -62,11 +57,8 @@
   }
 
   root.addEventListener("click", function (event) {
-    if (event.target.closest("[data-welcome-close]")) {
-      close();
-    } else if (event.target.closest("[data-welcome-cta]")) {
-      remember(); // the link itself then takes the visitor to the form
-    }
+    // the subscribe button is a normal link: it just takes the visitor to the form
+    if (event.target.closest("[data-welcome-close]")) close();
   });
 
   document.addEventListener("keydown", function (event) {
@@ -91,7 +83,7 @@
     }
   });
 
-  if (forced || !recentlySeen()) {
+  if (forced || SHOW_MODE === "always" || !shownThisVisit()) {
     window.setTimeout(open, DELAY_MS);
   }
 })();

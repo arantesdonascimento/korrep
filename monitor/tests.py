@@ -799,7 +799,10 @@ class WelcomePopupTests(TestCase):
         response = self.client.get(reverse('subscriptions:subscribe'))
         self.assertNotContains(response, 'id="welcome"')
 
-    def test_script_remembers_the_visitor_and_supports_a_test_switch(self):
+    def test_script_shows_once_per_visit_and_keeps_nothing_longer(self):
         source = (settings.BASE_DIR / 'static' / 'welcome.js').read_text(encoding='utf-8')
-        for needle in ('korrepWelcomeSeen', 'welcome=1', 'Escape', 'QUIET_DAYS'):
+        for needle in ('SHOW_MODE', 'sessionStorage', 'welcome=1', 'Escape'):
             self.assertIn(needle, source)
+        # nothing about the visitor outlives the browser session
+        self.assertNotIn('localStorage', source)
+        self.assertNotIn('document.cookie', source)
