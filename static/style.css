@@ -747,13 +747,16 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
 }
 
 .subscribe-heading {
-  font-size: clamp(42px, min(10vw, 14vh), 120px);   /* also scales with the screen height */
+  font-size: clamp(42px, min(10vw, 12vh), 120px);   /* also scales with the screen height */
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 0.95;
   color: var(--titanium);
   margin-bottom: 24px;
 }
+
+/* one word per line, as originally: SUBSCRIBE / TO / KORREP */
+.subscribe-heading span { display: block; }
 
 .subscribe-desc {
   margin: 0 auto 40px;

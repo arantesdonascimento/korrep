@@ -821,3 +821,9 @@ class SubscribeLayoutTests(SimpleTestCase):
 
     def test_subscribe_wrap_can_scroll_on_very_short_screens(self):
         self.assertIn('overflow-y: auto', self.css_block('.subscribe-wrap'))
+
+    def test_heading_keeps_to_between_subscribe_and_korrep_on_its_own_line(self):
+        html = (settings.BASE_DIR / 'templates' / 'index.html').read_text(encoding='utf-8')
+        self.assertIn('<span>SUBSCRIBE</span> <span>TO</span> <span>KORREP</span>', html)
+        css = (settings.BASE_DIR / 'static' / 'style.css').read_text(encoding='utf-8')
+        self.assertIn('.subscribe-heading span { display: block; }', css)
