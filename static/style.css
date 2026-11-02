@@ -720,8 +720,11 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
   height: 100%;
   display: flex;
   align-items: center;
+  align-items: safe center;   /* never push the top out of reach on very short screens */
   justify-content: center;
-  padding: 40px 24px;
+  /* keep the content clear of the fixed HUD bar at the bottom, like the other cards do */
+  padding: 40px 24px calc(var(--hud-h) + 28px);
+  overflow-y: auto;
 }
 
 .subscribe-content {
@@ -744,7 +747,7 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
 }
 
 .subscribe-heading {
-  font-size: clamp(42px, 10vw, 120px);
+  font-size: clamp(42px, min(10vw, 14vh), 120px);   /* also scales with the screen height */
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 0.95;
@@ -802,6 +805,13 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
   .glass-a, .glass-b, .glass-c, .node-dot, .hero-scroll-hint::after { animation: none !important; }
   .slice, .slice-img, .slice-shade, .slice-reveal, .matrix-img, .matrix-tab p { transition: none !important; }
   .card-macro, .matrix-right { min-height: 100vh; }
+}
+
+/* short screens: tighten the subscribe section so the button stays above the HUD bar */
+@media (max-height: 720px) {
+  .subscribe-eyebrow { margin-bottom: 18px; }
+  .subscribe-heading { margin-bottom: 16px; }
+  .subscribe-desc { margin-bottom: 26px; line-height: 1.55; }
 }
 
 /* ---------- welcome popup ---------- */

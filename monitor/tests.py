@@ -806,3 +806,18 @@ class WelcomePopupTests(TestCase):
         # nothing about the visitor outlives the browser session
         self.assertNotIn('localStorage', source)
         self.assertNotIn('document.cookie', source)
+
+
+class SubscribeLayoutTests(SimpleTestCase):
+    """The subscribe button must stay clear of the fixed HUD bar at the bottom."""
+
+    def css_block(self, selector):
+        css = (settings.BASE_DIR / 'static' / 'style.css').read_text(encoding='utf-8')
+        start = css.index(selector + ' {')
+        return css[start:css.index('}', start)]
+
+    def test_subscribe_content_reserves_room_for_the_hud_bar(self):
+        self.assertIn('var(--hud-h)', self.css_block('.subscribe-wrap'))
+
+    def test_subscribe_wrap_can_scroll_on_very_short_screens(self):
+        self.assertIn('overflow-y: auto', self.css_block('.subscribe-wrap'))
