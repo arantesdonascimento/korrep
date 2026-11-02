@@ -129,9 +129,9 @@
   var caption = document.getElementById("matrixCaption");
 
   var captions = {
-    core: "FIG. 01 / Budapest, Budapesti Corvinus Egyetem",
-    fluidics: "FIG. 02 / Budapest, Budapesti Műszaki és Gazdaságtudományi Egyetem, K épület",
-    sync: "FIG. 03 / Budapest, ELTE Radnóti Miklós Gyakorló Általános Iskola és Gyakorló Gimnázium"
+    core: "FIG. 01 / CORE FRAME",
+    fluidics: "FIG. 02 / FLUIDICS MANIFOLD",
+    sync: "FIG. 03 / SYNC TIMING PLANE"
   };
 
   tabs.forEach(function (tab) {
@@ -150,5 +150,18 @@
 
       caption.textContent = captions[key];
     });
+  });
+})();
+
+/* "Mégse" on the subscribe card: glide back to the very top (the hero).
+   Without JavaScript the link simply opens the home page. */
+(function () {
+  "use strict";
+  var link = document.querySelector("[data-scroll-top]");
+  if (!link) return;
+  link.addEventListener("click", function (event) {
+    event.preventDefault();
+    var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
   });
 })();

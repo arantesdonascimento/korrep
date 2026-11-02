@@ -786,6 +786,45 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
   border-color: var(--volt);
 }
 
+.subscribe-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* the quiet counterpart of .subscribe-btn: same size and type, outlined instead of filled */
+.subscribe-cancel {
+  display: inline-block;
+  padding: 14px 32px;
+  background: transparent;
+  color: var(--titanium);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 1px solid rgba(217, 224, 228, 0.4);
+  transition: all 0.4s var(--ease-silk);
+}
+
+.subscribe-cancel:hover {
+  color: var(--volt);
+  border-color: var(--volt);
+  background: rgba(209, 255, 0, 0.08);
+}
+
+.subscribe-btn:focus-visible,
+.subscribe-cancel:focus-visible {
+  outline: 2px solid var(--volt);
+  outline-offset: 3px;
+}
+
+@media (max-width: 520px) {
+  .subscribe-actions { flex-direction: column; gap: 12px; }
+  .subscribe-btn, .subscribe-cancel { width: 100%; max-width: 320px; text-align: center; }
+}
+
 .subscribe-grid {
   position: absolute;
   inset: 0;

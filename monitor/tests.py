@@ -827,3 +827,23 @@ class SubscribeLayoutTests(SimpleTestCase):
         self.assertIn('<span>SUBSCRIBE</span> <span>TO</span> <span>KORREP</span>', html)
         css = (settings.BASE_DIR / 'static' / 'style.css').read_text(encoding='utf-8')
         self.assertIn('.subscribe-heading span { display: block; }', css)
+
+    def test_eyebrow_is_in_hungarian(self):
+        html = (settings.BASE_DIR / 'templates' / 'index.html').read_text(encoding='utf-8')
+        self.assertIn('<p class="subscribe-eyebrow">05 / Maradjunk kapcsolatban</p>', html)
+        self.assertNotIn('Stay Connected', html)
+
+    def test_cancel_button_sits_next_to_subscribe_and_scrolls_to_the_top(self):
+        base = settings.BASE_DIR
+        html = (base / 'templates' / 'index.html').read_text(encoding='utf-8')
+        subscribe = html.index('class="subscribe-btn"')
+        cancel = html.index('class="subscribe-cancel"')
+        self.assertLess(subscribe, cancel)
+        self.assertIn('data-scroll-top>Mégse</a>', html)
+        self.assertIn('href="/" class="subscribe-cancel"', html)  # works without JavaScript too
+        script = (base / 'static' / 'script.js').read_text(encoding='utf-8')
+        self.assertIn('[data-scroll-top]', script)
+        self.assertIn('scrollTo', script)
+        css = (base / 'static' / 'style.css').read_text(encoding='utf-8')
+        self.assertIn('.subscribe-cancel {', css)
+
